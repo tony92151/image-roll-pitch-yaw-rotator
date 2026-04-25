@@ -13,6 +13,23 @@ jobs:
           fetch-depth: 0
           lfs: true
 
+      - name: Ensure Space exists
+        env:
+          HF_TOKEN: ${{ secrets.HUGGINGFACE_TOKEN }}
+        run: |
+          python -m pip install --quiet huggingface_hub
+          python - <<'PY'
+          import os
+          from huggingface_hub import create_repo
+
+          create_repo(
+              repo_id="tony92151/image-roll-pitch-yaw-rotator",
+              repo_type="space",
+              token=os.environ["HF_TOKEN"],
+              exist_ok=True,
+          )
+          PY
+
       - name: Push to hub
         env:
           HF_TOKEN: ${{ secrets.HUGGINGFACE_TOKEN }}
