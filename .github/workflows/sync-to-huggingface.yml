@@ -31,7 +31,7 @@ jobs:
           )
           PY
 
-      - name: Push to hub
+      - name: Force push to hub
         env:
           HF_TOKEN: ${{ secrets.HUGGINGFACE_TOKEN }}
-        run: git push https://tony92151:$HF_TOKEN@huggingface.co/spaces/tony92151/image-roll-pitch-yaw-rotator main
+        run: git push --force https://tony92151:$HF_TOKEN@huggingface.co/spaces/tony92151/image-roll-pitch-yaw-rotator main
