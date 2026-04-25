@@ -1,3 +1,17 @@
+---
+title: {{title}}
+emoji: {{emoji}}
+colorFrom: {{colorFrom}}
+colorTo: {{colorTo}}
+sdk: {{sdk}}
+sdk_version: "{{sdkVersion}}"
+{{#pythonVersion}}
+python_version: "{{pythonVersion}}"
+{{/pythonVersion}}
+app_file: app.py
+pinned: false
+---
+
 # image-roll-pitch-yaw-rotator
 
 這是一個可部署在 Hugging Face Spaces 的 Gradio 應用程式，讓使用者：
