@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" role="img" aria-labelledby="title desc">
+  <title id="title">Roll Pitch Yaw Orientation Guide</title>
+  <desc id="desc">Diagram showing how roll, pitch, and yaw sliders affect image orientation.</desc>
+  <rect width="1200" height="420" fill="#f5f5f5"/>
+  <text x="600" y="34" text-anchor="middle" font-size="28" font-family="Arial, sans-serif" fill="#1f2937">Roll / Pitch / Yaw 調整示意圖</text>
+
+  <!-- Panel templates -->
+  <g font-family="Arial, sans-serif" font-size="24" fill="#111827">
+    <rect x="35" y="70" width="350" height="300" rx="8" fill="#ffffff" stroke="#d1d5db" stroke-width="2"/>
+    <text x="60" y="110">Roll (Z 軸)</text>
+
+    <rect x="425" y="70" width="350" height="300" rx="8" fill="#ffffff" stroke="#d1d5db" stroke-width="2"/>
+    <text x="450" y="110">Pitch (X 軸)</text>
+
+    <rect x="815" y="70" width="350" height="300" rx="8" fill="#ffffff" stroke="#d1d5db" stroke-width="2"/>
+    <text x="840" y="110">Yaw (Y 軸)</text>
+  </g>
+
+  <!-- Camera frames -->
+  <g stroke="#4b5563" stroke-width="3" fill="none">
+    <rect x="155" y="165" width="110" height="90"/>
+    <line x1="210" y1="165" x2="210" y2="255" stroke="#9ca3af"/>
+    <line x1="155" y1="210" x2="265" y2="210" stroke="#9ca3af"/>
+
+    <rect x="545" y="165" width="110" height="90"/>
+    <line x1="600" y1="165" x2="600" y2="255" stroke="#9ca3af"/>
+    <line x1="545" y1="210" x2="655" y2="210" stroke="#9ca3af"/>
+
+    <rect x="935" y="165" width="110" height="90"/>
+    <line x1="990" y1="165" x2="990" y2="255" stroke="#9ca3af"/>
+    <line x1="935" y1="210" x2="1045" y2="210" stroke="#9ca3af"/>
+  </g>
+
+  <!-- Roll arrow -->
+  <path d="M130 250 A95 70 0 1 1 290 250" fill="none" stroke="#2563eb" stroke-width="6"/>
+  <polygon points="286,248 258,238 262,266" fill="#2563eb"/>
+  <text x="60" y="332" font-size="20" font-family="Arial, sans-serif" fill="#2563eb">像轉方向盤：左右傾斜（順/逆時針）</text>
+
+  <!-- Pitch arrow -->
+  <path d="M585 140 A40 95 0 1 1 615 320" fill="none" stroke="#16a34a" stroke-width="6"/>
+  <polygon points="597,142 612,168 582,166" fill="#16a34a"/>
+  <text x="450" y="332" font-size="20" font-family="Arial, sans-serif" fill="#16a34a">機頭上/下：上下仰俯</text>
+
+  <!-- Yaw arrow -->
+  <path d="M900 220 A105 45 0 1 1 1080 220" fill="none" stroke="#a21caf" stroke-width="6"/>
+  <polygon points="1078,218 1050,206 1052,234" fill="#a21caf"/>
+  <text x="840" y="332" font-size="20" font-family="Arial, sans-serif" fill="#a21caf">朝向左/右：水平轉向</text>
+
+  <text x="600" y="398" text-anchor="middle" font-size="21" font-family="Arial, sans-serif" fill="#374151">小技巧：先一次調一個軸，建議從 ±5° 開始微調。</text>
+</svg>

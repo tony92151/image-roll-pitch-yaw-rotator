@@ -144,6 +144,14 @@ with gr.Blocks(title="Roll Pitch Yaw Image Rotator") as demo:
     gr.Markdown(
         "上傳一張圖片後，可選擇預覽解析度倍率（1、1/2、1/4、1/8、1/16）；拖曳拉桿會即時顯示預覽，按下『下載原解析度』時才輸出原圖尺寸。"
     )
+    gr.Image(
+        value="assets/rpy_guide.svg",
+        label="Roll / Pitch / Yaw 操作示意",
+        show_label=True,
+        interactive=False,
+        show_download_button=False,
+        show_fullscreen_button=False,
+    )
 
     with gr.Row():
         with gr.Column(scale=1):
