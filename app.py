@@ -9,6 +9,13 @@ import numpy as np
 
 
 PREVIEW_MAX_SIDE = 960
+PREVIEW_SCALE_OPTIONS = {
+    "1": 1.0,
+    "1/2": 0.5,
+    "1/4": 0.25,
+    "1/8": 0.125,
+    "1/16": 0.0625,
+}
 
 
 def _rotation_matrix(roll: float, pitch: float, yaw: float) -> np.ndarray:
@@ -94,23 +101,24 @@ def _transform_image(image: np.ndarray, roll: float, pitch: float, yaw: float) -
     )
 
 
-def _downscale_for_preview(image: np.ndarray) -> np.ndarray:
+def _downscale_for_preview(image: np.ndarray, scale_label: str) -> np.ndarray:
+    scale = PREVIEW_SCALE_OPTIONS.get(scale_label, 0.5)
     h, w = image.shape[:2]
     max_side = max(h, w)
-    if max_side <= PREVIEW_MAX_SIDE:
+    capped_scale = min(scale, PREVIEW_MAX_SIDE / max_side) if max_side > PREVIEW_MAX_SIDE else scale
+    if capped_scale >= 1:
         return image
 
-    scale = PREVIEW_MAX_SIDE / max_side
-    new_w = max(1, int(round(w * scale)))
-    new_h = max(1, int(round(h * scale)))
+    new_w = max(1, int(round(w * capped_scale)))
+    new_h = max(1, int(round(h * capped_scale)))
     return cv2.resize(image, (new_w, new_h), interpolation=cv2.INTER_AREA)
 
 
-def preview_transform(image: np.ndarray, roll: float, pitch: float, yaw: float):
+def preview_transform(image: np.ndarray, roll: float, pitch: float, yaw: float, preview_scale: str):
     if image is None:
         return None, None
 
-    preview_image = _downscale_for_preview(image)
+    preview_image = _downscale_for_preview(image, preview_scale)
     transformed_preview = _transform_image(preview_image, roll, pitch, yaw)
     # 角度改變後清掉舊檔案，避免下載到舊圖
     return transformed_preview, None
@@ -134,7 +142,7 @@ def render_full_resolution(image: np.ndarray, roll: float, pitch: float, yaw: fl
 with gr.Blocks(title="Roll Pitch Yaw Image Rotator") as demo:
     gr.Markdown("# Image Roll/Pitch/Yaw Rotator")
     gr.Markdown(
-        "上傳一張圖片後，拖曳拉桿會先用快取預覽解析度即時顯示；按下『下載原解析度』時才輸出原圖尺寸。"
+        "上傳一張圖片後，可選擇預覽解析度倍率（1、1/2、1/4、1/8、1/16）；拖曳拉桿會即時顯示預覽，按下『下載原解析度』時才輸出原圖尺寸。"
     )
 
     with gr.Row():
@@ -143,13 +151,18 @@ with gr.Blocks(title="Roll Pitch Yaw Image Rotator") as demo:
             roll = gr.Slider(-45, 45, value=0, step=1, label="Roll (°)")
             pitch = gr.Slider(-45, 45, value=0, step=1, label="Pitch (°)")
             yaw = gr.Slider(-45, 45, value=0, step=1, label="Yaw (°)")
+            preview_scale = gr.Radio(
+                choices=list(PREVIEW_SCALE_OPTIONS.keys()),
+                value="1/2",
+                label="預覽解析度倍率",
+            )
             reset_btn = gr.Button("重設角度")
         with gr.Column(scale=1):
             output_image = gr.Image(type="numpy", label="即時結果（預覽解析度）")
             render_btn = gr.Button("下載原解析度")
             download_file = gr.File(label="下載圖片")
 
-    inputs = [input_image, roll, pitch, yaw]
+    inputs = [input_image, roll, pitch, yaw, preview_scale]
 
     for component in inputs:
         component.change(fn=preview_transform, inputs=inputs, outputs=[output_image, download_file])
