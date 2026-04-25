@@ -101,6 +101,68 @@ def _transform_image(image: np.ndarray, roll: float, pitch: float, yaw: float) -
     )
 
 
+def _draw_rpy_axes_overlay(image: np.ndarray, roll: float, pitch: float, yaw: float) -> np.ndarray:
+    """Draw a Roll/Pitch/Yaw axis indicator in the bottom-right of preview image."""
+    overlay = image.copy()
+    h, w = overlay.shape[:2]
+
+    panel = max(120, min(w, h) // 3)
+    pad = max(10, panel // 12)
+    x0 = w - panel - pad
+    y0 = h - panel - pad
+    x1 = w - pad
+    y1 = h - pad
+
+    cv2.rectangle(overlay, (x0, y0), (x1, y1), (245, 245, 245), thickness=-1)
+    cv2.rectangle(overlay, (x0, y0), (x1, y1), (190, 190, 190), thickness=1)
+
+    origin = np.array([x0 + int(panel * 0.42), y0 + int(panel * 0.62)], dtype=np.int32)
+    axis_scale = int(panel * 0.3)
+
+    # Isometric-like projection to mimic common aerospace axis diagram:
+    # y -> right, z -> up, x -> down-left.
+    proj_u = np.array([-0.72, 1.0, 0.0], dtype=np.float32)
+    proj_v = np.array([0.42, 0.0, -1.0], dtype=np.float32)
+
+    rot = _rotation_matrix(roll, pitch, yaw)
+    basis = {
+        "x": (np.array([1, 0, 0], dtype=np.float32), (155, 50, 50)),
+        "y": (np.array([0, 1, 0], dtype=np.float32), (40, 150, 40)),
+        "z": (np.array([0, 0, 1], dtype=np.float32), (200, 60, 60)),
+    }
+
+    for axis_name, (axis_vec, color) in basis.items():
+        rotated = rot @ axis_vec
+        dx = axis_scale * float(np.dot(proj_u, rotated))
+        dy = axis_scale * float(np.dot(proj_v, rotated))
+        end = (int(round(origin[0] + dx)), int(round(origin[1] + dy)))
+
+        cv2.arrowedLine(overlay, tuple(origin), end, color, 2, tipLength=0.18)
+        cv2.putText(
+            overlay,
+            axis_name,
+            (end[0] + 4, end[1] - 4),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.45,
+            color,
+            1,
+            cv2.LINE_AA,
+        )
+
+    cv2.putText(
+        overlay,
+        "Roll/Pitch/Yaw",
+        (x0 + 8, y0 + 18),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.45,
+        (60, 60, 60),
+        1,
+        cv2.LINE_AA,
+    )
+
+    return overlay
+
+
 def _downscale_for_preview(image: np.ndarray, scale_label: str) -> np.ndarray:
     scale = PREVIEW_SCALE_OPTIONS.get(scale_label, 0.5)
     h, w = image.shape[:2]
@@ -120,6 +182,7 @@ def preview_transform(image: np.ndarray, roll: float, pitch: float, yaw: float, 
 
     preview_image = _downscale_for_preview(image, preview_scale)
     transformed_preview = _transform_image(preview_image, roll, pitch, yaw)
+    transformed_preview = _draw_rpy_axes_overlay(transformed_preview, roll, pitch, yaw)
     # 角度改變後清掉舊檔案，避免下載到舊圖
     return transformed_preview, None
 
@@ -144,7 +207,6 @@ with gr.Blocks(title="Roll Pitch Yaw Image Rotator") as demo:
     gr.Markdown(
         "上傳一張圖片後，可選擇預覽解析度倍率（1、1/2、1/4、1/8、1/16）；拖曳拉桿會即時顯示預覽，按下『下載原解析度』時才輸出原圖尺寸。"
     )
-
     with gr.Row():
         with gr.Column(scale=1):
             input_image = gr.Image(type="numpy", label="上傳照片")
