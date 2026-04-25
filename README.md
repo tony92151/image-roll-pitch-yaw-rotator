@@ -1,15 +1,13 @@
 ---
-title: {{title}}
-emoji: {{emoji}}
-colorFrom: {{colorFrom}}
-colorTo: {{colorTo}}
-sdk: {{sdk}}
-sdk_version: "{{sdkVersion}}"
-{{#pythonVersion}}
-python_version: "{{pythonVersion}}"
-{{/pythonVersion}}
+title: image-roll-pitch-yaw-rotator
+emoji: 😻
+colorFrom: green
+colorTo: indigo
+sdk: gradio
+sdk_version: 5.23.2
 app_file: app.py
 pinned: false
+license: mit
 ---
 
 # image-roll-pitch-yaw-rotator
