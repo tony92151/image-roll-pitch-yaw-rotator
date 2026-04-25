@@ -169,7 +169,7 @@ with gr.Blocks(title="Roll Pitch Yaw Image Rotator") as demo:
 
     render_btn.click(
         fn=render_full_resolution,
-        inputs=inputs,
+        inputs=[input_image, roll, pitch, yaw],
         outputs=download_file,
     )
 
