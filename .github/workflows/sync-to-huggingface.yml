@@ -25,6 +25,7 @@ jobs:
           create_repo(
               repo_id="tony92151/image-roll-pitch-yaw-rotator",
               repo_type="space",
+              space_sdk="static",
               token=os.environ["HF_TOKEN"],
               exist_ok=True,
           )
